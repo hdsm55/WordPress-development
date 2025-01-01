@@ -18,13 +18,22 @@ get_header(); ?>
     the_post(); ?>
     <div class="event-summary">
       <a class="event-summary__date t-center" href="#">
-        <span class="event-summary__month">
-          <?php $event_date_raw = get_field('event_date'); // افترض أن الحقل يحتوي على '14/12/2023'
-          $event_Date = DateTime::createFromFormat('d/m/Y', $event_date_raw);
-          echo $event_Date->format('M');
-          ?>
-        </span>
-        <span class="event-summary__day"><?php echo $event_Date->format('d'); ?></span>
+        <?php 
+        $rawEventDate = get_field('event_date'); // الحصول على التاريخ الخام
+        if ($rawEventDate) { // التحقق من أن التاريخ موجود
+          $eventDate = DateTime::createFromFormat('d/m/Y', $rawEventDate); // إنشاء كائن DateTime باستخدام الصيغة الصحيحة
+          if ($eventDate) { // التحقق من أن الكائن تم إنشاؤه بنجاح
+        ?>
+            <span class="event-summary__month"><?php echo $eventDate->format('M'); ?></span>
+            <span class="event-summary__day"><?php echo $eventDate->format('d'); ?></span>
+        <?php 
+          } else {
+            echo '<span>Invalid Date Format</span>';
+          }
+        } else {
+          echo '<span>No Date Available</span>';
+        }
+        ?>
       </a>
       <div class="event-summary__content">
         <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
